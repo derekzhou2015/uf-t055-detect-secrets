@@ -25,6 +25,26 @@ If you love `detect-secrets`, please star our project on GitHub to show your sup
 [@xxxx]: https://github.com/xxxx
 -->
 
+### Unreleased
+
+#### :telescope: Accuracy
+
+- `GitHubTokenDetector` now detects fine-grained personal access tokens
+  (`github_pat_` + 22 alphanumeric characters + `_` + 59 alphanumeric characters),
+  in addition to the classic `ghp_`/`gho_`/`ghu_`/`ghs_`/`ghr_` token formats.
+
+#### :bug: Bugfixes
+
+- Fixed `GitHubTokenDetector` extracting only the token prefix (e.g. `ghp`) as the
+  secret value instead of the whole token. The classic-token regex used a capturing
+  group, so `re.findall` returned the group contents; it is now a non-capturing group
+  and the complete token is hashed into the baseline.
+- Fixed the command line entry point silently dropping `VERIFIED_FALSE` findings
+  (e.g. leaked-then-revoked credentials) under its default verification policy, while
+  the library entry point reported them. The default policy now suppresses nothing;
+  only the explicit `--only-verified` policy filters findings. `--no-verify` remains
+  unchanged (no network verification at all).
+
 ### v1.5.0
 ##### May 6th, 2024
 

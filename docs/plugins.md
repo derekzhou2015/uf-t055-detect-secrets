@@ -156,7 +156,12 @@ subclasses) since we are able to determine which server to contact.
 
 You are able to configure your verification settings via the `--no-verify` or `--only-verified`
 flags in `detect-secrets scan`. By default, `detect-secrets` will attempt to verify all secrets,
-and display both unverified and verified true secrets.
+and display every finding regardless of the verification result: unverified and verified-true
+secrets are reported as before, and verified-false secrets are now reported (labelled
+`False (verified)` in adhoc scans) rather than silently discarded, so that the command line
+entry point no longer under-reports relative to the library entry point. Only the explicit
+`--only-verified` flag suppresses anything (everything that cannot be verified as true);
+`--no-verify` skips network verification entirely and likewise keeps every finding.
 
 This is implemented as the [built-in filter](filters.md)
 `detect_secrets.filters.common.is_ignored_due_to_verification_policies`, which invokes each
