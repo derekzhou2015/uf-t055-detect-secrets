@@ -25,6 +25,21 @@ If you love `detect-secrets`, please star our project on GitHub to show your sup
 [@xxxx]: https://github.com/xxxx
 -->
 
+### Unreleased
+
+#### :telescope: Accuracy
+- The CLI entry point no longer silently drops secrets that verify as false
+  (e.g. leaked-then-revoked credentials) under the default verification policy.
+  Previously, `is_ignored_due_to_verification_policies` filtered out
+  `VERIFIED_FALSE` results whenever the filter was registered (the CLI default),
+  while library scans through `default_settings()` reported them — the two entry
+  points disagreed on the same content. The filter now drops nothing unless
+  `--only-verified` is used, and verification network errors never drop a secret.
+- `GitHubTokenDetector` now reports the *whole* classic token as the secret value
+  (a capturing group in the pattern caused only the `ghp`-style prefix to be
+  recorded), and detects fine-grained personal access tokens
+  (`github_pat_...`).
+
 ### v1.5.0
 ##### May 6th, 2024
 

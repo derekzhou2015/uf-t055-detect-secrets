@@ -158,6 +158,12 @@ You are able to configure your verification settings via the `--no-verify` or `-
 flags in `detect-secrets scan`. By default, `detect-secrets` will attempt to verify all secrets,
 and display both unverified and verified true secrets.
 
+Secrets that verify as **false** (e.g. a leaked-then-revoked credential) are still reported
+under the default policy — only `--only-verified` filters results down to secrets that verify
+as true. Verification errors (e.g. network failures) never cause a secret to be dropped. This
+keeps the CLI entry point consistent with library scans through
+`detect_secrets.settings.default_settings`, which register no verification filter at all.
+
 This is implemented as the [built-in filter](filters.md)
 `detect_secrets.filters.common.is_ignored_due_to_verification_policies`, which invokes each
 plugin's `verify` function. Furthermore, it leverages the dependency injection system, so `verify`
@@ -180,3 +186,8 @@ For more information on how to verify secrets, check out: https://github.com/str
 
 - There should be a total of three modified files in a minimal new plugin: the
   plugin file, it's corresponding test, and an updated CHANGELOG.
+
+- `RegexBasedDetector` extracts secrets with `re.findall`, so a **capturing group** in a
+  `denylist` pattern makes the *group* — not the whole match — the reported secret value.
+  Use non-capturing groups `(?:...)` for alternation (e.g. `(?:ghp|gho)_...`), unless you
+  deliberately want only part of the match recorded as the secret.
